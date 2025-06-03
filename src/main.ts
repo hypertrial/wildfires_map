@@ -1,10 +1,10 @@
-import L from 'leaflet';
-import { WildfireMap } from './components/WildfireMap.js';
-import { DataLoader } from './utils/DataLoader.js';
-import { UIControls } from './components/UIControls.js';
+import * as L from 'leaflet';
+import { WildfireMap } from './components/WildfireMap';
+import { DataLoader } from './utils/DataLoader';
+import { UIControls } from './components/UIControls';
 
 // Fix Leaflet default markers issue with Vite
-delete L.Icon.Default.prototype._getIconUrl;
+delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
   iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
@@ -12,6 +12,11 @@ L.Icon.Default.mergeOptions({
 });
 
 class WildfireApp {
+  private map: L.Map | null;
+  private wildfireMap: WildfireMap | null;
+  private dataLoader: DataLoader | null;
+  private uiControls: UIControls | null;
+
   constructor() {
     this.map = null;
     this.wildfireMap = null;
@@ -20,28 +25,30 @@ class WildfireApp {
     this.init();
   }
 
-  async init() {
+  private async init(): Promise<void> {
     try {
       // Initialize the map
       this.initializeMap();
 
       // Initialize components
-      this.wildfireMap = new WildfireMap(this.map);
-      this.dataLoader = new DataLoader();
-      this.uiControls = new UIControls(this.wildfireMap);
+      if (this.map) {
+        this.wildfireMap = new WildfireMap(this.map);
+        this.dataLoader = new DataLoader();
+        this.uiControls = new UIControls(this.wildfireMap);
 
-      // Load and display wildfire data
-      await this.loadWildfireData();
+        // Load and display wildfire data
+        await this.loadWildfireData();
 
-      // Hide loading indicator
-      this.hideLoading();
+        // Hide loading indicator
+        this.hideLoading();
+      }
     } catch (error) {
       console.error('Error initializing app:', error);
       this.showError('Failed to load wildfire data. Please refresh the page.');
     }
   }
 
-  initializeMap() {
+  private initializeMap(): void {
     // Initialize the Leaflet map
     this.map = L.map('map', {
       center: [39.8283, -98.5795], // Center of US
@@ -67,7 +74,7 @@ class WildfireApp {
     );
 
     // Layer control
-    const baseLayers = {
+    const baseLayers: { [key: string]: L.TileLayer } = {
       'Street Map': L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors',
       }),
@@ -77,27 +84,29 @@ class WildfireApp {
     L.control.layers(baseLayers).addTo(this.map);
   }
 
-  async loadWildfireData() {
+  private async loadWildfireData(): Promise<void> {
     try {
-      const geojsonData = await this.dataLoader.loadGeoJSON('./wildfire_forecast_60min.geojson');
-      this.wildfireMap.addWildfireLayer(geojsonData);
+      if (this.dataLoader && this.wildfireMap) {
+        const geojsonData = await this.dataLoader.loadGeoJSON('./wildfire_forecast_15min.geojson');
+        this.wildfireMap.addWildfireLayer(geojsonData);
 
-      // Fit map to data bounds
-      this.wildfireMap.fitToBounds();
+        // Fit map to data bounds
+        this.wildfireMap.fitToBounds();
+      }
     } catch (error) {
       console.error('Error loading wildfire data:', error);
       throw error;
     }
   }
 
-  hideLoading() {
+  private hideLoading(): void {
     const loadingElement = document.getElementById('loading');
     if (loadingElement) {
       loadingElement.style.display = 'none';
     }
   }
 
-  showError(message) {
+  private showError(message: string): void {
     const loadingElement = document.getElementById('loading');
     if (loadingElement) {
       loadingElement.innerHTML = `

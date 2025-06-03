@@ -1,12 +1,68 @@
+// GeoJSON type definitions
+interface GeoJsonObject {
+  type: string;
+  [key: string]: any;
+}
+
+interface Feature<G = any, P = any> extends GeoJsonObject {
+  type: 'Feature';
+  geometry: G;
+  properties: P;
+}
+
+interface FeatureCollection<G = any, P = any> extends GeoJsonObject {
+  type: 'FeatureCollection';
+  features: Feature<G, P>[];
+}
+
+interface Geometry extends GeoJsonObject {
+  type: string;
+  coordinates?: any;
+}
+
+interface Point extends Geometry {
+  type: 'Point';
+  coordinates: number[];
+}
+
+interface Polygon extends Geometry {
+  type: 'Polygon';
+  coordinates: number[][][];
+}
+
+interface MultiPolygon extends Geometry {
+  type: 'MultiPolygon';
+  coordinates: number[][][][];
+}
+
+interface StandardizedProperties {
+  [key: string]: any;
+  processed_at?: string;
+  risk_level?: string;
+  severity?: string;
+  intensity?: number;
+  temperature?: number;
+  humidity?: number;
+  wind_speed?: number;
+  name?: string;
+  last_update?: string;
+  forecast_time?: string;
+  calculated_area?: number;
+}
+
+type RiskLevel = 'low' | 'moderate' | 'high' | 'very_high' | 'extreme';
+
 export class DataLoader {
+  private cache: Map<string, FeatureCollection>;
+
   constructor() {
     this.cache = new Map();
   }
 
-  async loadGeoJSON(url) {
+  async loadGeoJSON(url: string): Promise<FeatureCollection> {
     // Check cache first
     if (this.cache.has(url)) {
-      return this.cache.get(url);
+      return this.cache.get(url)!;
     }
 
     try {
@@ -16,7 +72,7 @@ export class DataLoader {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const data = await response.json();
+      const data = (await response.json()) as GeoJsonObject;
 
       // Validate GeoJSON structure
       if (!this.isValidGeoJSON(data)) {
@@ -32,11 +88,11 @@ export class DataLoader {
       return processedData;
     } catch (error) {
       console.error('Error loading GeoJSON:', error);
-      throw new Error(`Failed to load data from ${url}: ${error.message}`);
+      throw new Error(`Failed to load data from ${url}: ${(error as Error).message}`);
     }
   }
 
-  isValidGeoJSON(data) {
+  private isValidGeoJSON(data: any): data is GeoJsonObject {
     // Basic GeoJSON validation
     if (!data || typeof data !== 'object') {
       return false;
@@ -70,22 +126,37 @@ export class DataLoader {
     return true;
   }
 
-  processGeoJSON(data) {
+  private processGeoJSON(data: GeoJsonObject): FeatureCollection {
     // Clone the data to avoid mutations
-    let processedData = JSON.parse(JSON.stringify(data));
+    let processedData: GeoJsonObject = JSON.parse(JSON.stringify(data));
 
     if (processedData.type === 'FeatureCollection') {
-      processedData.features = processedData.features.map((feature) => {
+      processedData.features = processedData.features.map((feature: Feature) => {
         return this.processFeature(feature);
       });
+      return processedData as FeatureCollection;
     } else if (processedData.type === 'Feature') {
-      processedData = this.processFeature(processedData);
+      const processedFeature = this.processFeature(processedData as Feature);
+      return {
+        type: 'FeatureCollection' as const,
+        features: [processedFeature],
+      };
     }
 
-    return processedData;
+    // If it's a geometry, wrap it in a feature collection
+    return {
+      type: 'FeatureCollection' as const,
+      features: [
+        {
+          type: 'Feature' as const,
+          geometry: processedData as Geometry,
+          properties: {},
+        },
+      ],
+    };
   }
 
-  processFeature(feature) {
+  private processFeature(feature: Feature): Feature<Geometry, StandardizedProperties> {
     if (!feature.properties) {
       feature.properties = {};
     }
@@ -100,17 +171,19 @@ export class DataLoader {
 
     // Calculate area for polygon features (approximate)
     if (feature.geometry && ['Polygon', 'MultiPolygon'].includes(feature.geometry.type)) {
-      feature.properties.calculated_area = this.calculateApproximateArea(feature.geometry);
+      feature.properties.calculated_area = this.calculateApproximateArea(
+        feature.geometry as Polygon | MultiPolygon
+      );
     }
 
-    return feature;
+    return feature as Feature<Geometry, StandardizedProperties>;
   }
 
-  standardizeProperties(properties) {
-    const standardized = { ...properties };
+  private standardizeProperties(properties: { [key: string]: any }): StandardizedProperties {
+    const standardized: StandardizedProperties = { ...properties };
 
     // Common property name mappings
-    const propertyMappings = {
+    const propertyMappings: { [key: string]: string } = {
       RISK_LEVEL: 'risk_level',
       riskLevel: 'risk_level',
       SEVERITY: 'severity',
@@ -154,7 +227,7 @@ export class DataLoader {
     return standardized;
   }
 
-  standardizeRiskLevel(value) {
+  private standardizeRiskLevel(value: any): RiskLevel | string {
     if (typeof value !== 'string') {
       return value;
     }
@@ -162,7 +235,7 @@ export class DataLoader {
     const lowercaseValue = value.toLowerCase().trim();
 
     // Map various risk level formats to standard values
-    const riskMappings = {
+    const riskMappings: { [key: string]: RiskLevel } = {
       low: 'low',
       minimal: 'low',
       green: 'low',
@@ -182,14 +255,14 @@ export class DataLoader {
     return riskMappings[lowercaseValue] || lowercaseValue;
   }
 
-  calculateApproximateArea(geometry) {
+  private calculateApproximateArea(geometry: Polygon | MultiPolygon): number {
     // This is a very rough approximation for display purposes only
     // For accurate area calculations, use a proper geographic library
 
     if (geometry.type === 'Polygon') {
       return this.calculatePolygonArea(geometry.coordinates[0]);
     } else if (geometry.type === 'MultiPolygon') {
-      return geometry.coordinates.reduce((total, polygon) => {
+      return geometry.coordinates.reduce((total: number, polygon: number[][][]) => {
         return total + this.calculatePolygonArea(polygon[0]);
       }, 0);
     }
@@ -197,7 +270,7 @@ export class DataLoader {
     return 0;
   }
 
-  calculatePolygonArea(coordinates) {
+  private calculatePolygonArea(coordinates: number[][]): number {
     // Simple area calculation using the shoelace formula (very approximate for lat/lon)
     if (coordinates.length < 3) return 0;
 
@@ -209,11 +282,11 @@ export class DataLoader {
     return Math.abs(area) / 2;
   }
 
-  clearCache() {
+  clearCache(): void {
     this.cache.clear();
   }
 
-  getCacheSize() {
+  getCacheSize(): number {
     return this.cache.size;
   }
 }

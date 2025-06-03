@@ -1,7 +1,35 @@
-import L from 'leaflet';
+import * as L from 'leaflet';
+
+// Basic GeoJSON type definitions for this component
+interface GeoJsonObject {
+  type: string;
+  [key: string]: any;
+}
+
+interface Feature<G = any, P = any> extends GeoJsonObject {
+  type: 'Feature';
+  geometry: G;
+  properties: P;
+}
+
+interface FeatureCollection<G = any, P = any> extends GeoJsonObject {
+  type: 'FeatureCollection';
+  features: Feature<G, P>[];
+}
+
+interface Geometry extends GeoJsonObject {
+  type: string;
+  coordinates?: any;
+}
 
 export class WildfireMap {
-  constructor(map) {
+  public map: L.Map;
+  private wildfireLayer: L.GeoJSON | null;
+  private layerGroup: L.LayerGroup;
+  private bounds: L.LatLngBounds | null;
+  private originalData: FeatureCollection | null;
+
+  constructor(map: L.Map) {
     this.map = map;
     this.wildfireLayer = null;
     this.layerGroup = L.layerGroup().addTo(map);
@@ -9,7 +37,7 @@ export class WildfireMap {
     this.originalData = null; // Store original data
   }
 
-  addWildfireLayer(geojsonData) {
+  addWildfireLayer(geojsonData: FeatureCollection): void {
     // Store original data
     this.originalData = geojsonData;
 
@@ -37,20 +65,19 @@ export class WildfireMap {
     }
   }
 
-  getFeatureStyle(feature) {
-    const baseStyle = {
+  private getFeatureStyle(feature?: Feature): L.PathOptions {
+    const baseStyle: L.PathOptions = {
       weight: 2,
       opacity: 0.8,
       fillOpacity: 0.6,
     };
 
     // Style based on the type of feature
-    if (feature.properties && feature.properties.cluster_center === true) {
+    if (feature?.properties && feature.properties.cluster_center === true) {
       return {
         ...baseStyle,
         color: '#ff4444',
         fillColor: '#ff6666',
-        radius: 8,
       };
     } else {
       // Forecast area styling
@@ -62,7 +89,7 @@ export class WildfireMap {
     }
   }
 
-  createClusterCenterMarker(feature, latlng) {
+  private createClusterCenterMarker(feature: Feature, latlng: L.LatLng): L.CircleMarker {
     return L.circleMarker(latlng, {
       radius: 8,
       fillColor: '#ff4444',
@@ -73,7 +100,7 @@ export class WildfireMap {
     });
   }
 
-  onEachFeature(feature, layer) {
+  private onEachFeature(feature: Feature, layer: L.Layer): void {
     if (feature.properties) {
       let popupContent = '<div class="wildfire-popup">';
 
@@ -105,26 +132,26 @@ export class WildfireMap {
     }
   }
 
-  getFeatureCoordinates(feature) {
+  private getFeatureCoordinates(feature: Feature): number[] | null {
     if (!feature.geometry) return null;
 
     const { type, coordinates } = feature.geometry;
 
     switch (type) {
       case 'Point':
-        return coordinates;
+        return coordinates as number[];
       case 'Polygon':
         // Return centroid of first ring
-        return this.getPolygonCentroid(coordinates[0]);
+        return this.getPolygonCentroid((coordinates as number[][][])[0]);
       case 'MultiPolygon':
         // Return centroid of first polygon's first ring
-        return this.getPolygonCentroid(coordinates[0][0]);
+        return this.getPolygonCentroid((coordinates as number[][][][])[0][0]);
       default:
         return null;
     }
   }
 
-  getPolygonCentroid(coordinates) {
+  private getPolygonCentroid(coordinates: number[][]): number[] {
     let x = 0,
       y = 0,
       area = 0;
@@ -143,13 +170,13 @@ export class WildfireMap {
     return area === 0 ? [coordinates[0][0], coordinates[0][1]] : [x / (6 * area), y / (6 * area)];
   }
 
-  fitToBounds() {
+  fitToBounds(): void {
     if (this.bounds && this.bounds.isValid()) {
       this.map.fitBounds(this.bounds, { padding: [20, 20] });
     }
   }
 
-  clearLayers() {
+  clearLayers(): void {
     this.layerGroup.clearLayers();
     this.wildfireLayer = null;
     this.bounds = null;

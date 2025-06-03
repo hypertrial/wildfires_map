@@ -1,17 +1,25 @@
+import * as L from 'leaflet';
+import { WildfireMap } from './WildfireMap';
+
 export class UIControls {
-  constructor(wildfireMap) {
+  private wildfireMap: WildfireMap;
+
+  constructor(wildfireMap: WildfireMap) {
     this.wildfireMap = wildfireMap;
     this.init();
   }
 
-  init() {
+  private init(): void {
     this.setupKeyboardShortcuts();
   }
 
-  setupKeyboardShortcuts() {
-    document.addEventListener('keydown', (e) => {
+  private setupKeyboardShortcuts(): void {
+    document.addEventListener('keydown', (e: KeyboardEvent) => {
       // Only trigger if not typing in an input field
-      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+      if (
+        (e.target as HTMLElement).tagName === 'INPUT' ||
+        (e.target as HTMLElement).tagName === 'TEXTAREA'
+      ) {
         return;
       }
 
@@ -34,7 +42,7 @@ export class UIControls {
     });
   }
 
-  showHelp() {
+  private showHelp(): void {
     const helpContent = `
       <div style="font-family: monospace; font-size: 12px; line-height: 1.4;">
         <h3 style="margin-top: 0;">🔥 Wildfire Map Controls</h3>
