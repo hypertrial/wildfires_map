@@ -1,0 +1,33 @@
+{
+  "name": "wildfire-forecast-map",
+  "version": "1.0.0",
+  "description": "Interactive wildfire forecast mapping application",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "deploy": "npm run build && gh-pages -d dist"
+  },
+  "dependencies": {
+    "leaflet": "^1.9.4"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0",
+    "gh-pages": "^6.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mattfaltyn/wildfires.git"
+  },
+  "homepage": "https://mattfaltyn.github.io/wildfires",
+  "keywords": [
+    "wildfire",
+    "mapping",
+    "geojson",
+    "leaflet",
+    "vite"
+  ],
+  "author": "",
+  "license": "MIT"
+}
