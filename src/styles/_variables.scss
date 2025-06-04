@@ -44,10 +44,13 @@ $spacing-md: 0.8rem;
 $spacing-lg: 1rem;
 $spacing-xl: 2rem;
 
-// Z-index
 $z-index-map: 1;
 $z-index-legend: 1000;
 $z-index-loading: 1001;
 
 // Breakpoints
-$mobile-breakpoint: 768px; 
+$mobile-breakpoint: 768px;
+$small-mobile-breakpoint: 480px;
+$tablet-breakpoint: 1024px;
+
+// ... rest of the file remains unchanged ... 

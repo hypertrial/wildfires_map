@@ -1,8 +1,26 @@
 @use 'variables' as *;
 
 #map {
-  height: calc(100vh - 120px);
+  height: calc(100vh - 140px);
   width: 100%;
+  position: relative;
+  border-radius: 0;
+  
+  // Improve map controls on mobile
+  .leaflet-control-container {
+    .leaflet-control-zoom {
+      border: none;
+      box-shadow: $shadow-medium;
+    }
+    
+    .leaflet-control-zoom a {
+      width: 36px;
+      height: 36px;
+      line-height: 36px;
+      font-size: 18px;
+      border-radius: $border-radius-sm;
+    }
+  }
 }
 
 // Leaflet map feature styling

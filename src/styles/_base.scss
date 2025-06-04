@@ -6,7 +6,29 @@
   box-sizing: border-box;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
 body {
   font-family: $font-family;
   background-color: $bg-light;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: $text-primary;
+  overflow-x: hidden;
+}
+
+// Improve touch targets on mobile
+@media (max-width: $mobile-breakpoint) {
+  button, 
+  a, 
+  input, 
+  select, 
+  textarea {
+    min-height: 44px;
+    min-width: 44px;
+  }
 } 

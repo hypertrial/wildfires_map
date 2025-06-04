@@ -4,23 +4,30 @@
   background: linear-gradient(135deg, $primary-blue, $primary-blue-dark);
   color: white;
   padding: $spacing-lg;
-  box-shadow: $shadow-light;
+  box-shadow: $shadow-medium;
   position: relative;
   z-index: $z-index-legend;
 
   .header-content {
-    position: relative;
     display: flex;
     align-items: center;
-    gap: $spacing-lg;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    min-height: 60px;
   }
 
   .header-logo {
+    position: absolute;
+    left: -100px;
+    top: 50%;
+    transform: translateY(-50%);
     z-index: 2;
     
     .logo {
-      height: 40px;
+      height: 42px;
       width: auto;
+      filter: brightness(1.1);
     }
   }
 
@@ -31,22 +38,25 @@
     transform: translate(-50%, -50%);
     text-align: center;
     z-index: 1;
+    white-space: nowrap;
     
     h1 {
       font-size: $font-size-xxl;
-      margin-bottom: $spacing-sm;
+      margin-bottom: $spacing-xs;
       margin-top: 0;
+      font-weight: 600;
+      letter-spacing: -0.02em;
     }
 
     p {
       opacity: 0.9;
-      font-size: $font-size-base;
+      font-size: $font-size-lg;
       margin: 0;
+      font-weight: 300;
     }
   }
 
   .header-spacer {
-    // Remove spacer as it's no longer needed
     display: none;
   }
 } 

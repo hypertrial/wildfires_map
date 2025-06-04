@@ -2,7 +2,7 @@
 
 .legend {
   background: $bg-white;
-  padding: $spacing-md;
+  padding: $spacing-lg;
   border-radius: $border-radius-md;
   box-shadow: $shadow-medium;
   border: 1px solid $border-blue;
@@ -11,34 +11,48 @@
   right: 20px;
   z-index: $z-index-legend;
   min-width: 200px;
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.95);
 
   h3 {
-    margin-bottom: $spacing-sm;
-    font-size: $font-size-base;
+    margin-bottom: $spacing-md;
+    font-size: $font-size-lg;
     color: $text-primary;
     font-weight: 600;
+    text-align: center;
+    border-bottom: 1px solid $border-blue;
+    padding-bottom: $spacing-sm;
   }
 }
 
 .legend-item {
   display: flex;
   align-items: center;
-  margin-bottom: 0.3rem;
-  font-size: $font-size-sm;
+  margin-bottom: $spacing-sm;
+  font-size: $font-size-base;
   color: $text-primary;
+  padding: $spacing-xs 0;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
 }
 
 .legend-color {
-  width: 20px;
-  height: 15px;
-  margin-right: $spacing-sm;
-  border-radius: 3px;
+  width: 24px;
+  height: 18px;
+  margin-right: $spacing-md;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
 }
 
 .legend-marker {
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   margin-right: $spacing-md;
   border: 2px solid $bg-white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  flex-shrink: 0;
 } 
