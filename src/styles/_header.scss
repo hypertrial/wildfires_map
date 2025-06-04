@@ -1,0 +1,52 @@
+@use 'variables' as *;
+
+.header {
+  background: linear-gradient(135deg, $primary-blue, $primary-blue-dark);
+  color: white;
+  padding: $spacing-lg;
+  box-shadow: $shadow-light;
+  position: relative;
+  z-index: $z-index-legend;
+
+  .header-content {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: $spacing-lg;
+  }
+
+  .header-logo {
+    z-index: 2;
+    
+    .logo {
+      height: 40px;
+      width: auto;
+    }
+  }
+
+  .header-text {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    z-index: 1;
+    
+    h1 {
+      font-size: $font-size-xxl;
+      margin-bottom: $spacing-sm;
+      margin-top: 0;
+    }
+
+    p {
+      opacity: 0.9;
+      font-size: $font-size-base;
+      margin: 0;
+    }
+  }
+
+  .header-spacer {
+    // Remove spacer as it's no longer needed
+    display: none;
+  }
+} 

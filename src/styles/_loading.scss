@@ -1,0 +1,24 @@
+@use 'variables' as *;
+
+.loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: $bg-white;
+  padding: $spacing-xl;
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-heavy;
+  border: 1px solid $border-blue;
+  text-align: center;
+  z-index: $z-index-loading;
+
+  h3 {
+    color: $primary-blue;
+    margin-bottom: $spacing-sm;
+  }
+
+  p {
+    color: $text-muted;
+  }
+} 

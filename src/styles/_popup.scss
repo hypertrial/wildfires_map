@@ -1,0 +1,28 @@
+@use 'variables' as *;
+
+// Leaflet popup styling
+.leaflet-popup-content-wrapper {
+  border-radius: $border-radius-md !important;
+  box-shadow: $shadow-medium !important;
+  border: 1px solid $border-blue !important;
+}
+
+.wildfire-popup {
+  h3 {
+    color: $primary-blue;
+    margin-top: 0;
+    margin-bottom: $spacing-sm;
+    font-size: $font-size-lg;
+    font-weight: 600;
+  }
+
+  p {
+    margin: $spacing-xs 0;
+    font-size: 0.85rem;
+    color: $text-primary;
+  }
+
+  strong {
+    color: $text-secondary;
+  }
+} 

@@ -1,0 +1,23 @@
+@use 'variables' as *;
+
+#map {
+  height: calc(100vh - 120px);
+  width: 100%;
+}
+
+// Leaflet map feature styling
+.wildfire-cluster-center {
+  fill: $fire-red !important;
+  stroke: $fire-red-dark !important;
+  stroke-width: 2px !important;
+  fill-opacity: 0.8 !important;
+  stroke-opacity: 1 !important;
+}
+
+.wildfire-forecast-area {
+  fill: $fire-orange !important;
+  stroke: $fire-orange-dark !important;
+  stroke-width: 2px !important;
+  fill-opacity: 0.6 !important;
+  stroke-opacity: 0.8 !important;
+} 

@@ -1,0 +1,44 @@
+@use 'variables' as *;
+
+.legend {
+  background: $bg-white;
+  padding: $spacing-md;
+  border-radius: $border-radius-md;
+  box-shadow: $shadow-medium;
+  border: 1px solid $border-blue;
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  z-index: $z-index-legend;
+  min-width: 200px;
+
+  h3 {
+    margin-bottom: $spacing-sm;
+    font-size: $font-size-base;
+    color: $text-primary;
+    font-weight: 600;
+  }
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.3rem;
+  font-size: $font-size-sm;
+  color: $text-primary;
+}
+
+.legend-color {
+  width: 20px;
+  height: 15px;
+  margin-right: $spacing-sm;
+  border-radius: 3px;
+}
+
+.legend-marker {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: $spacing-md;
+  border: 2px solid $bg-white;
+} 

@@ -45,7 +45,7 @@ export class UIControls {
   private showHelp(): void {
     const helpContent = `
       <div style="font-family: monospace; font-size: 12px; line-height: 1.4;">
-        <h3 style="margin-top: 0;">🔥 Wildfire Map Controls</h3>
+        <h3 style="margin-top: 0;">Wildfire Map Controls</h3>
         <table style="border-collapse: collapse; width: 100%;">
           <tr><td style="padding: 2px 8px 2px 0;"><kbd>F</kbd></td><td>Fit map to wildfire data</td></tr>
           <tr><td style="padding: 2px 8px 2px 0;"><kbd>ESC</kbd></td><td>Close popups</td></tr>

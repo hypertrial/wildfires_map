@@ -2,6 +2,7 @@ import * as L from 'leaflet';
 import { WildfireMap } from './components/WildfireMap';
 import { DataLoader } from './utils/DataLoader';
 import { UIControls } from './components/UIControls';
+import './styles/main.scss';
 
 // Fix Leaflet default markers issue with Vite
 delete (L.Icon.Default.prototype as any)._getIconUrl;

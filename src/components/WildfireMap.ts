@@ -66,49 +66,56 @@ export class WildfireMap {
   }
 
   private getFeatureStyle(feature?: Feature): L.PathOptions {
-    const baseStyle: L.PathOptions = {
+    // Return minimal style - actual styling will be handled by CSS classes
+    return {
       weight: 2,
       opacity: 0.8,
       fillOpacity: 0.6,
     };
-
-    // Style based on the type of feature
-    if (feature?.properties && feature.properties.cluster_center === true) {
-      return {
-        ...baseStyle,
-        color: '#ff4444',
-        fillColor: '#ff6666',
-      };
-    } else {
-      // Forecast area styling
-      return {
-        ...baseStyle,
-        color: '#ff8800',
-        fillColor: '#ffaa44',
-      };
-    }
   }
 
   private createClusterCenterMarker(feature: Feature, latlng: L.LatLng): L.CircleMarker {
-    return L.circleMarker(latlng, {
+    const marker = L.circleMarker(latlng, {
       radius: 8,
-      fillColor: '#ff4444',
-      color: '#cc0000',
       weight: 2,
       opacity: 1,
       fillOpacity: 0.8,
     });
+
+    // Add CSS class for styling
+    marker.on('add', () => {
+      const element = marker.getElement();
+      if (element) {
+        element.classList.add('wildfire-cluster-center');
+      }
+    });
+
+    return marker;
   }
 
   private onEachFeature(feature: Feature, layer: L.Layer): void {
+    // Add CSS classes for styling
+    if (layer instanceof L.Path) {
+      layer.on('add', () => {
+        const element = layer.getElement();
+        if (element) {
+          if (feature.properties?.cluster_center === true) {
+            element.classList.add('wildfire-cluster-center');
+          } else {
+            element.classList.add('wildfire-forecast-area');
+          }
+        }
+      });
+    }
+
     if (feature.properties) {
       let popupContent = '<div class="wildfire-popup">';
 
       // Add basic fire information
       if (feature.properties.cluster_center === true) {
-        popupContent += '<h3>🔥 Wildfire Cluster Center</h3>';
+        popupContent += '<h3>Wildfire Cluster Center</h3>';
       } else {
-        popupContent += '<h3>🌡️ Forecast Area</h3>';
+        popupContent += '<h3>Forecast Area</h3>';
       }
 
       // Add available properties
