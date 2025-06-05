@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 
 export default defineConfig({
-  base: '/wildfires/',
+  base: '/wildfires_map/',
   build: {
     outDir: 'dist',
     assetsDir: 'assets',

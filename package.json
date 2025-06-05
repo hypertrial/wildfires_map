@@ -23,9 +23,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/mattfaltyn/wildfires.git"
+    "url": "https://github.com/hypertrial/wildfires_map.git"
   },
-  "homepage": "https://mattfaltyn.github.io/wildfires",
+  "homepage": "https://hypertrial.github.io/wildfires_map",
   "keywords": [
     "wildfire",
     "mapping",
